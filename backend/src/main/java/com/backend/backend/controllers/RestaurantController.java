@@ -24,8 +24,13 @@ public class RestaurantController {
         return restaurantService.addRestaurant(restaurant);
     }
 
-    @PostMapping("/restaurant/{id}")
+    @PutMapping("/restaurant/{id}")
     public ResponseEntity<Restaurant> updateRestaurant(@RequestBody Restaurant restaurant, @PathVariable Integer id) {
         return restaurantService.updateRestaurant(restaurant, id);
+    }
+
+    @DeleteMapping("/restaurant/{id}")
+    public ResponseEntity<String> deleteRestaurant(@PathVariable Integer id) {
+        return restaurantService.deleteRestaurant(id);
     }
 }

@@ -1,6 +1,7 @@
 package com.backend.backend.controllers;
 
 import com.backend.backend.dto.RestaurantTableRequestBody;
+import com.backend.backend.dto.RestaurantTableUpdateRequestBody;
 import com.backend.backend.models.RestaurantTable;
 import com.backend.backend.services.TableService;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +24,16 @@ public class TableController {
     @PostMapping("/table")
     public ResponseEntity<RestaurantTable> addTable(@RequestBody RestaurantTableRequestBody restaurantTableRequestBody) {
         return tableService.addTable(restaurantTableRequestBody);
+    }
+
+    @PutMapping("/table/{id}")
+    public ResponseEntity<RestaurantTable> updateTable(@RequestBody RestaurantTableUpdateRequestBody restaurantTableUpdateRequestBody,
+                                                       @PathVariable Integer id) {
+        return tableService.updateTable(restaurantTableUpdateRequestBody, id);
+    }
+
+    @DeleteMapping("/table/{id}")
+    public ResponseEntity<String> deleteTable(@PathVariable Integer id) {
+        return tableService.deleteTable(id);
     }
 }

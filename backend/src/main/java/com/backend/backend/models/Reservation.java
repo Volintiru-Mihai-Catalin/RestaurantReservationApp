@@ -32,7 +32,8 @@ public class Reservation {
             foreignKey = @ForeignKey(
                     name = "fk_reservation_restaurant_id",
                     value = ConstraintMode.CONSTRAINT
-            )
+            ),
+            unique = true
     )
     private Restaurant restaurant;
 
@@ -43,7 +44,8 @@ public class Reservation {
             foreignKey = @ForeignKey(
                     name = "fk_reservation_table_id",
                     value = ConstraintMode.CONSTRAINT
-            )
+            ),
+            unique = true
     )
     private RestaurantTable table;
 
@@ -54,7 +56,8 @@ public class Reservation {
             foreignKey = @ForeignKey(
                     name = "fk_reservation_client_email",
                     value = ConstraintMode.CONSTRAINT
-            )
+            ),
+            unique = true
     )
     private Client client;
 }

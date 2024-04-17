@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -37,13 +36,16 @@ public class RestaurantService {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
 
+        Restaurant restaurantToUpdate = optionalRestaurant.get();
+
         Optional<Restaurant> restaurantOptional = restaurantRepository.findByName(restaurant.getName());
         if (restaurantOptional.isPresent()) {
-            if (!Objects.equals(restaurantOptional, optionalRestaurant))
+            if (!restaurantToUpdate.getRestaurantId().equals(restaurantOptional.get().getRestaurantId())) {
                 return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+            }
         }
 
-        Restaurant restaurantToUpdate = optionalRestaurant.get();
+
         restaurantToUpdate.setAddress(restaurant.getAddress());
         restaurantToUpdate.setName(restaurant.getName());
         restaurantToUpdate.setPhoneNumber(restaurant.getPhoneNumber());

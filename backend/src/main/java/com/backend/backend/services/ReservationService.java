@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +48,9 @@ public class ReservationService {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
 
-        Optional<RestaurantTable> optionalRestaurantTable = tableRepository.findById(1);
+        List<Integer> tableIds = tableRepository.findAll().stream().map(RestaurantTable::getTableId).toList();
+        Optional<RestaurantTable> optionalRestaurantTable = tableRepository.findById(tableIds.get(new Random().nextInt(tableIds.size())));
+
         if (optionalRestaurantTable.isEmpty()) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
@@ -76,5 +79,16 @@ public class ReservationService {
         } catch(ParseException ignored) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public ResponseEntity<String> deleteReservation(Integer id) {
+        Optional<Reservation> optionalReservation = reservationRepository.findById(id);
+
+        if (optionalReservation.isEmpty()) {
+            return new ResponseEntity<>("Reservation not found", HttpStatus.NOT_FOUND);
+        }
+
+        reservationRepository.delete(optionalReservation.get());
+        return new ResponseEntity<>("Reservation deleted", HttpStatus.OK);
     }
 }
