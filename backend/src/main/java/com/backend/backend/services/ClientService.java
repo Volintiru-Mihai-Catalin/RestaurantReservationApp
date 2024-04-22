@@ -1,10 +1,14 @@
 package com.backend.backend.services;
 
 import com.backend.backend.models.Client;
+import com.backend.backend.models.Role;
 import com.backend.backend.repositories.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +29,7 @@ public class ClientService {
         if (clientOptional.isPresent()) {
             return new ResponseEntity<>(null, HttpStatus.CONFLICT);
         }
+        client.setRole(Role.ROLE_USER);
 
         return new ResponseEntity<>(clientRepository.save(client), HttpStatus.CREATED);
     }
@@ -61,5 +66,19 @@ public class ClientService {
 
         clientRepository.delete(optionalClient.get());
         return new ResponseEntity<>("Client deleted", HttpStatus.NOT_FOUND);
+    }
+
+    public UserDetailsService userDetailsService() {
+        return new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                return clientRepository.findByEmail(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("Client not found"));
+            }
+        };
+    }
+
+    public Client save(Client newClient) {
+        return clientRepository.save(newClient);
     }
 }

@@ -33,7 +33,7 @@ public class Reservation {
                     name = "fk_reservation_restaurant_id",
                     value = ConstraintMode.CONSTRAINT
             ),
-            unique = true
+            unique = false
     )
     private Restaurant restaurant;
 
