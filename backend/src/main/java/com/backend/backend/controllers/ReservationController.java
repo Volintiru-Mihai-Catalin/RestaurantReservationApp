@@ -3,6 +3,7 @@ package com.backend.backend.controllers;
 import com.backend.backend.dto.ReservationTableRequestBody;
 import com.backend.backend.models.Reservation;
 import com.backend.backend.services.ReservationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class ReservationController {
     private final ReservationService reservationService;
 
