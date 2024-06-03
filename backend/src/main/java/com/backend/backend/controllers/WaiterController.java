@@ -19,25 +19,25 @@ public class WaiterController {
 
     @GetMapping("/waiters")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Waiter>> getWaiters() {
+    public ResponseEntity getWaiters() {
         return waiterService.getWaiters();
     }
 
     @PostMapping("/waiter")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Waiter> addWaiter(@RequestBody Waiter waiter) {
+    public ResponseEntity addWaiter(@RequestBody Waiter waiter) {
         return waiterService.addWaiter(waiter);
     }
 
     @PutMapping("/waiter/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Waiter> updateWaiter(@RequestBody Waiter waiter, @PathVariable Integer id) {
+    public ResponseEntity updateWaiter(@RequestBody Waiter waiter, @PathVariable Integer id) {
         return waiterService.updateWaiter(waiter, id);
     }
 
     @DeleteMapping("/waiter/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteWaiter(@PathVariable Integer id) {
+    public ResponseEntity deleteWaiter(@PathVariable Integer id) {
         return waiterService.deleteWaiter(id);
     }
 }

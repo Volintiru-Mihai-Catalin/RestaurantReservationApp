@@ -15,25 +15,25 @@ import java.util.Optional;
 public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
 
-    public ResponseEntity<List<Restaurant>> getRestaurants() {
+    public ResponseEntity getRestaurants() {
         return new ResponseEntity<>(restaurantRepository.findAll(), HttpStatus.OK);
     }
 
-    public ResponseEntity<Restaurant> addRestaurant(Restaurant restaurant) {
+    public ResponseEntity addRestaurant(Restaurant restaurant) {
         Optional<Restaurant> optionalRestaurant = restaurantRepository.findByName(restaurant.getName());
 
         if (optionalRestaurant.isPresent()) {
-            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Restaurant already exists!", HttpStatus.CONFLICT);
         }
 
         return new ResponseEntity<>(restaurantRepository.save(restaurant), HttpStatus.CREATED);
     }
 
-    public ResponseEntity<Restaurant> updateRestaurant(Restaurant restaurant, Integer id) {
+    public ResponseEntity updateRestaurant(Restaurant restaurant, Integer id) {
         Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(id);
 
         if (optionalRestaurant.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Restaurant not found!", HttpStatus.NOT_FOUND);
         }
 
         Restaurant restaurantToUpdate = optionalRestaurant.get();
@@ -41,7 +41,7 @@ public class RestaurantService {
         Optional<Restaurant> restaurantOptional = restaurantRepository.findByName(restaurant.getName());
         if (restaurantOptional.isPresent()) {
             if (!restaurantToUpdate.getRestaurantId().equals(restaurantOptional.get().getRestaurantId())) {
-                return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+                return new ResponseEntity<>("Restaurant name already exists", HttpStatus.CONFLICT);
             }
         }
 
@@ -53,7 +53,7 @@ public class RestaurantService {
         return new ResponseEntity<>(restaurantRepository.save(restaurantToUpdate), HttpStatus.OK);
     }
 
-    public ResponseEntity<String> deleteRestaurant(Integer id) {
+    public ResponseEntity deleteRestaurant(Integer id) {
         Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(id);
 
         if (optionalRestaurant.isEmpty()) {

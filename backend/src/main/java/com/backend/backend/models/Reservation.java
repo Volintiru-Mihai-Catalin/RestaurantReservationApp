@@ -15,10 +15,6 @@ import java.util.Date;
 @Entity
 public class Reservation {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "reservation_id")
-    private Integer reservationId;
-
     @Column(name = "reservation_date")
     private Date reservationDate;
 
@@ -37,27 +33,25 @@ public class Reservation {
     )
     private Restaurant restaurant;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(
             name = "table_id",
             referencedColumnName = "table_id",
             foreignKey = @ForeignKey(
                     name = "fk_reservation_table_id",
                     value = ConstraintMode.CONSTRAINT
-            ),
-            unique = true
+            )
     )
     private RestaurantTable table;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(
             name = "email",
             referencedColumnName = "email",
             foreignKey = @ForeignKey(
                     name = "fk_reservation_client_email",
                     value = ConstraintMode.CONSTRAINT
-            ),
-            unique = true
+            )
     )
     private Client client;
 }

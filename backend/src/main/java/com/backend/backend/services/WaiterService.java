@@ -16,24 +16,24 @@ import java.util.Optional;
 public class WaiterService {
     private final WaiterRepository waiterRepository;
 
-    public ResponseEntity<List<Waiter>> getWaiters() {
+    public ResponseEntity getWaiters() {
         return new ResponseEntity<>(waiterRepository.findAll(), HttpStatus.OK);
     }
 
-    public ResponseEntity<Waiter> addWaiter(Waiter waiter) {
+    public ResponseEntity addWaiter(Waiter waiter) {
         Optional<Waiter> optionalWaiter = waiterRepository.findByFirstNameAndAndLastName(waiter.getFirstName(), waiter.getLastName());
         if (optionalWaiter.isPresent()) {
-            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Waiter name already exists!", HttpStatus.CONFLICT);
         }
 
         return new ResponseEntity<>(waiterRepository.save(waiter), HttpStatus.CREATED);
     }
 
-    public ResponseEntity<Waiter> updateWaiter(Waiter waiter, Integer id) {
+    public ResponseEntity updateWaiter(Waiter waiter, Integer id) {
         Optional<Waiter> optionalWaiter = waiterRepository.findById(id);
 
         if (optionalWaiter.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Waiter not found!", HttpStatus.NOT_FOUND);
         }
 
         Waiter waiterToUpdate = optionalWaiter.get();
@@ -43,7 +43,7 @@ public class WaiterService {
 
         if (waiterOptional.isPresent()) {
             if (!waiterToUpdate.getWaiterId().equals(waiterOptional.get().getWaiterId())) {
-                return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+                return new ResponseEntity<>("Waiter name already exists!", HttpStatus.CONFLICT);
             }
         }
 
@@ -53,7 +53,7 @@ public class WaiterService {
         return new ResponseEntity<>(waiterRepository.save(waiterToUpdate), HttpStatus.OK);
     }
 
-    public ResponseEntity<String> deleteWaiter(Integer id) {
+    public ResponseEntity deleteWaiter(Integer id) {
         Optional<Waiter> optionalWaiter = waiterRepository.findById(id);
 
         if (optionalWaiter.isEmpty()) {

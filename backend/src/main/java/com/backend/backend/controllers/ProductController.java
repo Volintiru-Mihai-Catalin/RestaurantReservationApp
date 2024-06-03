@@ -19,25 +19,25 @@ public class ProductController {
 
     @GetMapping("/products")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Product>> getProducts() {
+    public ResponseEntity getProducts() {
         return productService.getProducts();
     }
 
     @PostMapping("/product")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
+    public ResponseEntity addProduct(@RequestBody Product product) {
         return productService.addProduct(product);
     }
 
     @PutMapping("/product/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Product> updateProduct(@RequestBody Product product, @PathVariable Integer id) {
+    public ResponseEntity updateProduct(@RequestBody Product product, @PathVariable Integer id) {
         return productService.updateProduct(product, id);
     }
 
     @DeleteMapping("/product/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteProduct(@PathVariable Integer id) {
+    public ResponseEntity deleteProduct(@PathVariable Integer id) {
         return productService.deleteProduct(id);
     }
 }

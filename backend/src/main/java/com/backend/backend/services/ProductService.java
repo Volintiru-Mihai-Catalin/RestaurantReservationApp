@@ -16,32 +16,32 @@ import java.util.Optional;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public ResponseEntity<List<Product>> getProducts() {
+    public ResponseEntity getProducts() {
         return new ResponseEntity<>(productRepository.findAll(), HttpStatus.OK);
     }
 
-    public ResponseEntity<Product> addProduct(Product product) {
+    public ResponseEntity addProduct(Product product) {
         Optional<Product> optionalProduct = productRepository.findByProductName(product.getProductName());
 
         if (optionalProduct.isPresent()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Product not found!", HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity<>(productRepository.save(product), HttpStatus.OK);
     }
 
-    public ResponseEntity<Product> updateProduct(Product product, Integer productId) {
+    public ResponseEntity updateProduct(Product product, Integer productId) {
         Optional<Product> optionalProduct = productRepository.findById(productId);
 
         if (optionalProduct.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Product not found!", HttpStatus.NOT_FOUND);
         }
 
         Product productToUpdate = optionalProduct.get();
         Optional<Product> productOptional = productRepository.findByProductName(product.getProductName());
         if (productOptional.isPresent()) {
             if (!productToUpdate.getProductId().equals(productOptional.get().getProductId())) {
-                return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+                return new ResponseEntity<>("Product name already exists!", HttpStatus.CONFLICT);
             }
         }
 
@@ -53,7 +53,7 @@ public class ProductService {
         return new ResponseEntity<>(productRepository.save(productToUpdate), HttpStatus.OK);
     }
 
-    public ResponseEntity<String> deleteProduct(Integer productId) {
+    public ResponseEntity deleteProduct(Integer productId) {
         Optional<Product> optionalProduct = productRepository.findById(productId);
 
         if (optionalProduct.isEmpty()) {

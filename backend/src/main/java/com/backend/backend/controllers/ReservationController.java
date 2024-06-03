@@ -1,5 +1,6 @@
 package com.backend.backend.controllers;
 
+import com.backend.backend.dto.ReservationGetDTO;
 import com.backend.backend.dto.ReservationTableRequestBody;
 import com.backend.backend.models.Reservation;
 import com.backend.backend.services.ReservationService;
@@ -15,24 +16,17 @@ import java.util.List;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ReservationController {
     private final ReservationService reservationService;
 
     @GetMapping("/reservations")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Reservation>> getReservations() {
+    public ResponseEntity getReservations() {
         return reservationService.getReservations();
     }
 
     @PostMapping("/reservation")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Reservation> postReservation(@RequestBody ReservationTableRequestBody reservationTableRequestBody) {
+    public ResponseEntity postReservation(@RequestBody ReservationTableRequestBody reservationTableRequestBody) {
         return reservationService.addReservation(reservationTableRequestBody);
-    }
-
-    @DeleteMapping("/reservation/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteReservation(@PathVariable Integer id) {
-        return reservationService.deleteReservation(id);
     }
 }

@@ -21,26 +21,26 @@ public class TableController {
 
     @GetMapping("/tables")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<RestaurantTable>> getTables() {
+    public ResponseEntity getTables() {
         return tableService.getTables();
     }
 
     @PostMapping("/table")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<RestaurantTable> addTable(@RequestBody RestaurantTableRequestBody restaurantTableRequestBody) {
+    public ResponseEntity addTable(@RequestBody RestaurantTableRequestBody restaurantTableRequestBody) {
         return tableService.addTable(restaurantTableRequestBody);
     }
 
     @PutMapping("/table/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<RestaurantTable> updateTable(@RequestBody RestaurantTableUpdateRequestBody restaurantTableUpdateRequestBody,
+    public ResponseEntity updateTable(@RequestBody RestaurantTableUpdateRequestBody restaurantTableUpdateRequestBody,
                                                        @PathVariable Integer id) {
         return tableService.updateTable(restaurantTableUpdateRequestBody, id);
     }
 
     @DeleteMapping("/table/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteTable(@PathVariable Integer id) {
+    public ResponseEntity deleteTable(@PathVariable Integer id) {
         return tableService.deleteTable(id);
     }
 }

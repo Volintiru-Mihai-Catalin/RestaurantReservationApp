@@ -22,29 +22,29 @@ public class OrderService {
     private final TableRepository tableRepository;
     private final ProductRepository productRepository;
 
-    public ResponseEntity<List<Order>> getOrders() {
+    public ResponseEntity getOrders() {
         return new ResponseEntity<>(orderRepository.findAll(), HttpStatus.OK);
     }
 
-    public ResponseEntity<List<Order>> getOrdersByTable(Integer tableId) {
+    public ResponseEntity getOrdersByTable(Integer tableId) {
         Optional<RestaurantTable> optionalTable = tableRepository.findById(tableId);
 
         if (optionalTable.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Table not found!", HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity<>(orderRepository.findAllByRestaurantTable(optionalTable.get()), HttpStatus.OK);
     }
 
-    public ResponseEntity<Order> addOrder(OrderRequestBody orderRequestBody) {
+    public ResponseEntity addOrder(OrderRequestBody orderRequestBody) {
         Optional<Product> optionalProduct = productRepository.findById(orderRequestBody.getProductId());
         if (optionalProduct.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Product not found!", HttpStatus.NOT_FOUND);
         }
 
         Optional<RestaurantTable> optionalTable = tableRepository.findById(orderRequestBody.getTableId());
         if (optionalTable.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Table not found!", HttpStatus.NOT_FOUND);
         }
 
         Order newOrder = Order
@@ -55,7 +55,7 @@ public class OrderService {
         return new ResponseEntity<>(orderRepository.save(newOrder), HttpStatus.OK);
     }
 
-    public ResponseEntity<String> deleteOrder(Integer orderId) {
+    public ResponseEntity deleteOrder(Integer orderId) {
         Optional<Order> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isEmpty()) {
             return new ResponseEntity<>("Order not found", HttpStatus.NOT_FOUND);

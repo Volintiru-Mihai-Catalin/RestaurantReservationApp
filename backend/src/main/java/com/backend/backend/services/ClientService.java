@@ -19,26 +19,26 @@ import java.util.Optional;
 public class ClientService {
     private final ClientRepository clientRepository;
 
-    public ResponseEntity<List<Client>> getClients() {
+    public ResponseEntity getClients() {
         return new ResponseEntity<>(clientRepository.findAll(), HttpStatus.OK);
     }
 
-    public ResponseEntity<Client> addClient(Client client) {
+    public ResponseEntity addClient(Client client) {
         Optional<Client> clientOptional = clientRepository.findByEmail(client.getEmail());
 
         if (clientOptional.isPresent()) {
-            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Client not found!", HttpStatus.CONFLICT);
         }
         client.setRole(Role.ROLE_USER);
 
         return new ResponseEntity<>(clientRepository.save(client), HttpStatus.CREATED);
     }
 
-    public ResponseEntity<Client> updateClient(Client client, Integer id) {
+    public ResponseEntity updateClient(Client client, Integer id) {
         Optional<Client> clientOptional = clientRepository.findById(id);
 
         if (clientOptional.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Client not found!", HttpStatus.NOT_FOUND);
         }
 
         Client clientToUpdate = clientOptional.get();
@@ -46,7 +46,7 @@ public class ClientService {
         Optional<Client> optionalClient = clientRepository.findByEmail(client.getEmail());
         if (optionalClient.isPresent()) {
             if (!clientToUpdate.getId().equals(optionalClient.get().getId())) {
-                return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+                return new ResponseEntity<>("Email already exists!", HttpStatus.CONFLICT);
             }
         }
 
@@ -57,7 +57,7 @@ public class ClientService {
         return new ResponseEntity<>(clientRepository.save(clientToUpdate), HttpStatus.OK);
     }
 
-    public ResponseEntity<String> deleteClient(Integer id) {
+    public ResponseEntity deleteClient(Integer id) {
         Optional<Client> optionalClient = clientRepository.findById(id);
 
         if (optionalClient.isEmpty()) {
@@ -79,6 +79,8 @@ public class ClientService {
     }
 
     public Client save(Client newClient) {
+        if (clientRepository.findByEmail(newClient.getEmail()).isPresent())
+            return null;
         return clientRepository.save(newClient);
     }
 }

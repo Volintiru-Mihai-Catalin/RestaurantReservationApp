@@ -6,24 +6,24 @@ import com.backend.backend.dto.SignInRequest;
 import com.backend.backend.dto.SignUpRequest;
 import com.backend.backend.services.AuthenticationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/signup")
-    public JwtAuthenticationResponse signUp(@RequestBody SignUpRequest request) {
+    public ResponseEntity<JwtAuthenticationResponse> signUp(@RequestBody SignUpRequest request) {
         return authenticationService.signUp(request);
     }
 
     @PostMapping("/signin")
-    public JwtAuthenticationResponse signIn(@RequestBody SignInRequest request) {
+    public ResponseEntity<JwtAuthenticationResponse> signIn(@RequestBody SignInRequest request) {
         return authenticationService.signIn(request);
     }
 }

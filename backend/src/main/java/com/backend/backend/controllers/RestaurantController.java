@@ -13,31 +13,31 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 @SecurityRequirement(name = "bearerAuth")
 public class RestaurantController {
     private final RestaurantService restaurantService;
 
     @GetMapping("/restaurants")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Restaurant>> getRestaurants() {
+    public ResponseEntity getRestaurants() {
         return restaurantService.getRestaurants();
     }
 
     @PostMapping("/restaurant")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Restaurant> addRestaurant(@RequestBody Restaurant restaurant) {
+    public ResponseEntity addRestaurant(@RequestBody Restaurant restaurant) {
         return restaurantService.addRestaurant(restaurant);
     }
 
     @PutMapping("/restaurant/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Restaurant> updateRestaurant(@RequestBody Restaurant restaurant, @PathVariable Integer id) {
+    public ResponseEntity updateRestaurant(@RequestBody Restaurant restaurant, @PathVariable Integer id) {
         return restaurantService.updateRestaurant(restaurant, id);
     }
 
     @DeleteMapping("/restaurant/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteRestaurant(@PathVariable Integer id) {
+    public ResponseEntity deleteRestaurant(@PathVariable Integer id) {
         return restaurantService.deleteRestaurant(id);
     }
 }

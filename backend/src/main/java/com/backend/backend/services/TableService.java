@@ -24,16 +24,16 @@ public class TableService {
     private final WaiterRepository waiterRepository;
     private final RestaurantRepository restaurantRepository;
 
-    public ResponseEntity<List<RestaurantTable>> getTables() {
+    public ResponseEntity getTables() {
         return new ResponseEntity<>(tableRepository.findAll(), HttpStatus.OK);
     }
 
-    public ResponseEntity<RestaurantTable> addTable(RestaurantTableRequestBody restaurantTableRequestBody) {
+    public ResponseEntity addTable(RestaurantTableRequestBody restaurantTableRequestBody) {
         Optional<Restaurant> optionalRestaurant = restaurantRepository
                 .findByName(restaurantTableRequestBody.getRestaurantName());
 
         if (optionalRestaurant.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Restaurant not found!", HttpStatus.NOT_FOUND);
         }
 
         List<Integer> waiterIds = waiterRepository.findAll().stream().map(Waiter::getWaiterId).toList();
@@ -41,7 +41,7 @@ public class TableService {
 
 
         if (optionalWaiter.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Waiter not found!", HttpStatus.NOT_FOUND);
         }
 
         RestaurantTable restaurantTable = RestaurantTable
@@ -54,18 +54,18 @@ public class TableService {
         return new ResponseEntity<>(tableRepository.save(restaurantTable), HttpStatus.CREATED);
     }
 
-    public ResponseEntity<RestaurantTable> updateTable(RestaurantTableUpdateRequestBody restaurantTableUpdateRequestBody,
+    public ResponseEntity updateTable(RestaurantTableUpdateRequestBody restaurantTableUpdateRequestBody,
                                                        Integer id) {
         Optional<RestaurantTable> optionalRestaurantTable = tableRepository.findById(id);
 
         if (optionalRestaurantTable.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Table not found!", HttpStatus.NOT_FOUND);
         }
 
         Optional<Waiter> optionalWaiter = waiterRepository.findById(restaurantTableUpdateRequestBody.getWaiterId());
 
         if (optionalWaiter.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Waiter not found!", HttpStatus.NOT_FOUND);
         }
 
         RestaurantTable tableToUpdate = optionalRestaurantTable.get();
@@ -75,7 +75,7 @@ public class TableService {
         return new ResponseEntity<>(tableRepository.save(tableToUpdate), HttpStatus.OK);
     }
 
-    public ResponseEntity<String> deleteTable(Integer id) {
+    public ResponseEntity deleteTable(Integer id) {
         Optional<RestaurantTable> restaurantTableOptional = tableRepository.findById(id);
 
         if (restaurantTableOptional.isEmpty()) {

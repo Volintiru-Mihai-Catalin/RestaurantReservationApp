@@ -19,23 +19,22 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping("/orders")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Order>> getOrders() {
+    public ResponseEntity getOrders() {
         return orderService.getOrders();
     }
 
     @PostMapping("/order")
-    public ResponseEntity<Order> addOrders(@RequestBody OrderRequestBody orderRequestBody) {
+    public ResponseEntity addOrders(@RequestBody OrderRequestBody orderRequestBody) {
         return orderService.addOrder(orderRequestBody);
     }
 
     @PostMapping("/order/table_{id}")
-    public ResponseEntity<List<Order>> getOrdersByTable(@PathVariable Integer id) {
+    public ResponseEntity getOrdersByTable(@PathVariable Integer id) {
         return orderService.getOrdersByTable(id);
     }
 
     @DeleteMapping("/order/{id}")
-    public ResponseEntity<String> deleteOrder(@PathVariable Integer id) {
+    public ResponseEntity deleteOrder(@PathVariable Integer id) {
         return orderService.deleteOrder(id);
     }
 }

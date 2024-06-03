@@ -19,25 +19,25 @@ public class ClientController {
 
     @GetMapping("/clients")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Client>> getClients() {
+    public ResponseEntity getClients() {
         return clientService.getClients();
     }
 
     @PostMapping("/client")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Client> addClient(@RequestBody Client client) {
+    public ResponseEntity addClient(@RequestBody Client client) {
         return clientService.addClient(client);
     }
 
     @PutMapping("/client/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Client> updateClient(@RequestBody Client client, @PathVariable Integer id) {
+    public ResponseEntity updateClient(@RequestBody Client client, @PathVariable Integer id) {
         return clientService.updateClient(client, id);
     }
 
     @DeleteMapping("/client/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteClient(@PathVariable Integer id) {
+    public ResponseEntity deleteClient(@PathVariable Integer id) {
         return clientService.deleteClient(id);
     }
 }

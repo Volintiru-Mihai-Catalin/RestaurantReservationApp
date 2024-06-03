@@ -1,5 +1,6 @@
 package com.backend.backend.services;
 
+import com.backend.backend.dto.ReservationGetDTO;
 import com.backend.backend.dto.ReservationTableRequestBody;
 import com.backend.backend.models.Client;
 import com.backend.backend.models.Reservation;
@@ -15,12 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
-import java.util.Date;
+import java.util.*;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -30,34 +28,45 @@ public class ReservationService {
     private final TableRepository tableRepository;
     private final RestaurantRepository restaurantRepository;
 
-    public ResponseEntity<List<Reservation>> getReservations() {
-        return new ResponseEntity<>(reservationRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity getReservations() {
+        List<Reservation> reservationList = reservationRepository.findAll();
+        List<ReservationGetDTO> reservationGetDTOList = reservationList.stream()
+                .map(reservation -> ReservationGetDTO.builder()
+                        .restaurantName(reservation.getRestaurant().getName())
+                        .tableId(reservation.getTable().getTableId().toString())
+                        .reservationDate(reservation.getReservationDate().toString())
+                        .endTime(reservation.getEndTime().toString())
+                        .build())
+                .toList();
+        return new ResponseEntity<>(reservationGetDTOList, HttpStatus.OK);
     }
 
-    public ResponseEntity<Reservation> addReservation(ReservationTableRequestBody reservationTableRequestBody) {
+    public ResponseEntity addReservation(ReservationTableRequestBody reservationTableRequestBody) {
         Optional<Client> optionalClient = clientRepository.findByEmail(reservationTableRequestBody.getEmail());
 
         if (optionalClient.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Client not found!", HttpStatus.NOT_FOUND);
         }
 
         Optional<Restaurant> optionalRestaurant = restaurantRepository
                 .findByName(reservationTableRequestBody.getRestaurantName());
 
         if (optionalRestaurant.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-
-        List<Integer> tableIds = tableRepository.findAll().stream().map(RestaurantTable::getTableId).toList();
-        Optional<RestaurantTable> optionalRestaurantTable = tableRepository.findById(tableIds.get(new Random().nextInt(tableIds.size())));
-
-        if (optionalRestaurantTable.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Restaurant not found!", HttpStatus.NOT_FOUND);
         }
 
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date parsedDate = dateFormat.parse(reservationTableRequestBody.getReservationDate());
+
+            List<Integer> busyTableIds = getBusyTables(parsedDate).stream().map(Reservation::getTable).map(RestaurantTable::getTableId).toList();
+            List<Integer> tablesIds = tableRepository.findAll().stream().map(RestaurantTable::getTableId).filter(tableId -> !busyTableIds.contains(tableId)).toList();
+
+            if (tablesIds.isEmpty()) {
+                return new ResponseEntity<>("No table available!", HttpStatus.NOT_FOUND);
+            }
+
+            Optional<RestaurantTable> optionalRestaurantTable = tableRepository.findById(tablesIds.get(new Random().nextInt(tablesIds.size())));
 
             Reservation reservation = Reservation
                     .builder()
@@ -81,14 +90,30 @@ public class ReservationService {
         }
     }
 
-    public ResponseEntity<String> deleteReservation(Integer id) {
-        Optional<Reservation> optionalReservation = reservationRepository.findById(id);
-
-        if (optionalReservation.isEmpty()) {
-            return new ResponseEntity<>("Reservation not found", HttpStatus.NOT_FOUND);
-        }
-
-        reservationRepository.delete(optionalReservation.get());
-        return new ResponseEntity<>("Reservation deleted", HttpStatus.OK);
+    private List<Reservation> getBusyTables(Date reservationDate) {
+        List<Reservation> reservationList = reservationRepository.findAll();
+        return reservationList.stream().filter(reservation -> {
+            boolean isBusy = ((Date
+                    .from(reservation
+                            .getReservationDate()
+                            .toInstant()
+                            .minus(Duration.ofMinutes(1)))).before(reservationDate)
+                    &&
+                    reservationDate.before((Date
+                            .from(reservation
+                                    .getEndTime()
+                                    .toInstant()
+                                    .minus(Duration.ofMinutes(1))))))
+                    ||
+                    ((Date.from(reservationDate
+                            .toInstant()
+                            .plus(Duration.ofHours(2)))).before(reservation.getEndTime())
+                    &&
+                    (reservation.getReservationDate().before(Date.from(reservationDate
+                            .toInstant()
+                            .plus(Duration.ofHours(2)))))
+                    );
+            return isBusy;
+        }).toList();
     }
 }
